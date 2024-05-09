@@ -34,7 +34,7 @@ void uart1_init(){
   r|=(2<<12)|(2<<15);    // alt5
 
   *GPFSEL1 = r;
-  *GPPUD = 1;
+  *GPPUD = 0;
 
   r=150; while(r--) { asm volatile("nop"); }
   *GPPUDCLK0 = (1<<14)|(1<<15);
@@ -60,4 +60,16 @@ char uart1_getc(){
   r=(char)(*AUX_MU_IO);
 
   return r;
+}
+
+void uart1_puth(uint32_t h){
+  uint32_t n;
+  int32_t c;
+
+  for(c=28; c>=0; c-=4) {
+    // highest tetrad
+    n=(h>>c)&0xF;
+    n+=n>9?0x37:0x30;
+    uart1_putc(n);
+  } 
 }

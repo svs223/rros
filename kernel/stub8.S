@@ -3,16 +3,11 @@
 // put this at the front
 .section ".text.boot"
 
-.org 0x80000
 // k8 entry point
 
 .global _start
 
 _start:
-        mrs x1, mpidr_el1
-        and x1, x1, #3
-        cbnz x1, 3f 
-
         // set stack
         ldr x5, =_start
         mov sp, x5

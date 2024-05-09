@@ -7,12 +7,21 @@ KASFLAGS := -target $(TARGET) -ffreestanding
 kernel8.img: k8.elf
 	llvm-objcopy -O binary $< kernel8.img
 
-k8.elf: obj/k8.o obj/stub8.o obj/uart1.o
+k8.elf: obj/k8.o obj/multithread.o obj/stub8.o obj/uart1.o obj/mbox.o
 	clang $(KLDFLAGS) -o $@ $^
 
 obj/k8.o: kernel/k8.c
 	mkdir -p obj
 	clang $(KCFLAGS) $^ -c -o $@
+
+obj/multithread.o: kernel/multithread.S
+	mkdir -p obj
+	clang $(KASFLAGS) $^ -c -o $@
+
+obj/mbox.o: kernel/mbox.c
+	mkdir -p obj
+	clang $(KCFLAGS) $^ -c -o $@ 
+	
 
 obj/uart1.o: kernel/uart1.c
 	mkdir -p obj
