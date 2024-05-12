@@ -5,7 +5,9 @@
 #include "gpio.h"
 #include "uart1.h"
 #include "mbox.h"
-#include "multicore.h"
+#include "delay.h"
+#include "lfb.h"
+//#include "multicore.h"
 
 #define AUX_ENABLE      ((volatile unsigned int*)(MMIO_BASE+0x00215004))
 #define AUX_MU_IO       ((volatile unsigned int*)(MMIO_BASE+0x00215040))
@@ -25,38 +27,15 @@ void warn(){
 }
 
 
-void cr1maim(){
+void k8main(uint64_t dtb_ptr32, uint64_t x1, uint64_t x2, uint64_t x3){
 	uart1_init();
 	uart1_puts("rros alpha via k8\r\n");
+	uart1_puts("[INFO] attempting to initialize FB\n");
 
-	mbox[0] = 8*4;
-	mbox[1] = MBOX_REQUEST;
-
-	mbox[2] = MBOX_TAG_GETSERIAL;
-	mbox[3] = 8;
-	mbox[4] = 8;
-	mbox[5] = 0;
-	mbox[6] = 0;
-
-	mbox[7] = MBOX_TAG_LAST;
-
-	if(mbox_call(MBOX_CH_PROP)){
-		uart1_puts("[INFO] serial: ");
-		uart1_puth(mbox[6]);
-		uart1_puth(mbox[5]);
-		uart1_putc('\n');
-	}
-
-
+	lfb_print(80, 80, "rros booting via k8");
+	uart1_puts("Uwaa");
+	
 	while(1){
 		uart1_putc(uart1_getc());
-	}
-}
-
-void k8main(uint64_t dtb_ptr32, uint64_t x1, uint64_t x2, uint64_t x3){
-	init_core1();
-
-	while(1){
-		asm volatile("wfe");
 	}
 }
