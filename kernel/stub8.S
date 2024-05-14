@@ -36,6 +36,10 @@ el2:
         msr hcr_el2, x0
         mrs x0, hcr_el2
 
+        mov     x2, #0x0800
+        movk    x2, #0x30d0, lsl #16
+        msr     sctlr_el1, x2
+
         //change execution level to el1
         mov x2, #0x3c4
         msr spsr_el2, x2
