@@ -3,6 +3,7 @@
 
 //#include "mmio.h"
 #include "gpio.h"
+#include "kutil.h"
 
 #define AUX_ENABLE      ((volatile uint32_t*)(MMIO_BASE+0x00215004))
 #define AUX_MU_IO       ((volatile unsigned int*)(MMIO_BASE+0x00215040))
@@ -57,7 +58,8 @@ void uart1_puts(char *s){
 char uart1_getc(){
   char r;
   do{asm volatile("nop");}while(!(*AUX_MU_LSR&0x01));
-  r=(char)(*AUX_MU_IO);
+  
+  r=(char)(kget32(*AUX_MU_IO));
 
   return r;
 }

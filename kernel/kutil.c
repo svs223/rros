@@ -1,6 +1,6 @@
 #include <stdint.h>
 
-int8_t get_el(){
+int8_t get_el(void){
   uint64_t el;
   asm volatile("mrs %0, CurrentEL" : "=r"(el));
 

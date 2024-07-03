@@ -115,7 +115,7 @@ void mmu_init()
         PT_MEM;       // normal memory
 
     // kernel L3
-    paging[5*512]=(unsigned long)(MMIO_BASE+0x00215000) |   // physical address
+    paging[5*512]=(unsigned long)(MMIO_BASE) |   // physical address
         PT_PAGE |     // map 4k
         PT_AF |       // accessed flag
         PT_NX |       // no execute

@@ -3,9 +3,19 @@
 // put this at the front
 .section ".text.boot"
 
+.include "kernel/entry.S"
+
 // k8 entry point
 
+.macro ventry i
+.align 7
+kernel_entry
+mov     x0, #\i
+b handle_stub
+.endm
+
 .global _start
+.globl v_init
 
 _start:
         mrs x0, mpidr_el1
@@ -20,7 +30,7 @@ _start:
         blo el1
         
 el3:
-        
+        // TO BE IMPLIMENTED        
 
 el2:
         // enable generic timer
@@ -61,10 +71,55 @@ el1:
         sub w6, w6, #1
         cbnz w6, 1b
 
-        
-2:      bl k8main
+2:
+        bl k8main
 
 4:
         wfe
         b 4b
+
+
+handle_stub:
+       // kernel_entry
+
+        mrs     x1, esr_el1
+        mrs     x2, elr_el1
+        mrs     x3, spsr_el1
+        mrs     x4, far_el1
+
+        bl nhandle_irq
+
+        kernel_exit
+
+        b hang      
+
+      //  kernel_exit
         
+
+v_init:
+        ldr x2, =_vectors
+        msr vbar_el1, x2
+        ret
+
+.align 11
+_vectors:
+        ventry 0 
+        ventry 1 
+        ventry 2 
+        ventry 3 
+
+        ventry 0 
+        ventry 1 
+        ventry 2 
+        ventry 3 
+
+        ventry 0 
+        ventry 1 
+        ventry 2 
+        ventry 3 
+
+        ventry 0 
+        ventry 1 
+        ventry 2 
+        ventry 3 
+
